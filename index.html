@@ -103,16 +103,41 @@
       box-shadow: 0 20px 48px rgba(36, 48, 31, 0.16);
     }
 
-    .destination-image,
+    .destination-banner {
+      min-height: 150px;
+      display: grid;
+      place-items: end start;
+      padding: 1rem;
+      background:
+        linear-gradient(135deg, rgba(36, 48, 31, 0.08), rgba(63, 125, 88, 0.28)),
+        linear-gradient(135deg, #eee4cf, #bdd0ad);
+    }
+
+    .destination-banner span {
+      display: inline-block;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.86);
+      color: var(--accent-dark);
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
     .activity-image {
       width: 100%;
+      height: 190px;
       object-fit: cover;
       display: block;
       background: linear-gradient(135deg, #d7d0b9, #80956f);
     }
 
-    .destination-image { height: 180px; }
-    .activity-image { height: 185px; }
+    .activity-image-note {
+      padding: 0.45rem 0.75rem;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.78rem;
+      background: rgba(246, 241, 232, 0.8);
+    }
 
     .destination-content { padding: 1.15rem; }
 
@@ -126,9 +151,7 @@
       color: var(--muted);
     }
 
-    button {
-      font: inherit;
-    }
+    button { font: inherit; }
 
     .destination-card button,
     .back-btn,
@@ -317,7 +340,7 @@
     <h1>Pick a destination</h1>
     <p class="intro">
       Choose a trip option below. Each destination includes real activities, one-of-a-kind food stops,
-      rough pricing, planning notes, dog rules, and official/source links.
+      rough pricing, planning notes, dog rules, and source links. Images are only shown when they are tied to a specific source/place.
     </p>
   </header>
 
@@ -325,7 +348,7 @@
     <section id="landing" class="view active">
       <div class="destination-grid">
         <article class="destination-card" data-location="poconos">
-          <img class="destination-image" src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1400&q=80" alt="Forest and mountain scenery">
+          <div class="destination-banner"><span>Waterfalls • Forests • Jim Thorpe</span></div>
           <div class="destination-content">
             <h2>Pocono Mountains, PA</h2>
             <p>Best for waterfalls, forest parks, historic towns, easy family stops, and casual dining.</p>
@@ -339,7 +362,7 @@
         </article>
 
         <article class="destination-card" data-location="asheville">
-          <img class="destination-image" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80" alt="Blue Ridge mountain view">
+          <div class="destination-banner"><span>Blue Ridge • Food • Waterfalls</span></div>
           <div class="destination-content">
             <h2>Asheville, NC</h2>
             <p>Best all-around mix of mountain views, food, gardens, breweries, waterfalls, and dog-friendly patios.</p>
@@ -353,7 +376,7 @@
         </article>
 
         <article class="destination-card" data-location="blackhills">
-          <img class="destination-image" src="https://images.unsplash.com/photo-1604086681453-cd8c8f409b31?auto=format&fit=crop&w=1400&q=80" alt="Badlands style landscape">
+          <div class="destination-banner"><span>Badlands • Wildlife • Scenic Roads</span></div>
           <div class="destination-content">
             <h2>Black Hills & Badlands, SD</h2>
             <p>Best for a true road-trip vacation: wildlife drives, national parks, landmarks, caves, and scenic towns.</p>
@@ -410,22 +433,7 @@
   </footer>
 
   <script>
-    const fallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='500' viewBox='0 0 900 500'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%23d8d0b9'/%3E%3Cstop offset='1' stop-color='%236f8a5b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='900' height='500' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23fffaf0' font-family='Arial' font-size='38' font-weight='700'%3ETrip Stop%3C/text%3E%3C/svg%3E";
-
-    const imageMap = {
-      waterfall: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80",
-      train: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1200&q=80",
-      forest: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-      town: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80",
-      dining: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
-      brewery: "https://images.unsplash.com/photo-1532634733-cae1395e440f?auto=format&fit=crop&w=1200&q=80",
-      scenic: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-      garden: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80",
-      wildlife: "https://images.unsplash.com/photo-1500479694472-551d1fb6258d?auto=format&fit=crop&w=1200&q=80",
-      landmark: "https://images.unsplash.com/photo-1596223575327-99a5be4faf1d?auto=format&fit=crop&w=1200&q=80",
-      cave: "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?auto=format&fit=crop&w=1200&q=80",
-      museum: "https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?auto=format&fit=crop&w=1200&q=80"
-    };
+    const fallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='500' viewBox='0 0 900 500'%3E%3Crect width='900' height='500' fill='%23d8d0b9'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%2324301f' font-family='Arial' font-size='32' font-weight='700'%3EImage unavailable%3C/text%3E%3C/svg%3E";
 
     const locations = {
       poconos: {
@@ -438,7 +446,8 @@
           {
             type: "activity",
             name: "Bushkill Falls",
-            image: imageMap.waterfall,
+            image: "https://www.visitbushkillfalls.com/media/487074/bushkil-falls_scenic-fall_60106085_1000x667.jpg",
+            imageNote: "Image from Bushkill Falls source.",
             summary: "Private waterfall park with bridges, wooded trails, and views of eight waterfalls. This is the classic Pocono tourist stop.",
             details: "Best as a half-day nature activity. Expect stairs and walking. Dog access may be limited by trail/rules, so check before committing.",
             time: "1-3 hours",
@@ -451,7 +460,6 @@
           {
             type: "activity",
             name: "Delaware Water Gap National Recreation Area",
-            image: imageMap.forest,
             summary: "Large National Park Service recreation area with river access, scenic roads, picnic areas, hiking, and overlooks.",
             details: "One of the better dog-friendly options near the Poconos. Best when you want flexible outdoor time without paying attraction pricing.",
             time: "Half day to full day",
@@ -464,7 +472,6 @@
           {
             type: "activity",
             name: "Lehigh Gorge State Park",
-            image: imageMap.forest,
             summary: "Free state park with river scenery, trail access, biking, hiking, and picnic areas.",
             details: "Better than a paid attraction if your group just wants nature, space, and a dog-compatible outdoor day.",
             time: "1 hour to full day",
@@ -477,7 +484,6 @@
           {
             type: "activity",
             name: "Jim Thorpe Historic District",
-            image: imageMap.town,
             summary: "Walkable historic town with shops, cafes, architecture, mountain views, and a strong day-trip feel.",
             details: "This is a good non-hiking filler day. Dogs work well for outdoor walking, but shops/restaurants vary.",
             time: "2-5 hours",
@@ -490,7 +496,6 @@
           {
             type: "activity",
             name: "Lehigh Gorge Scenic Railway",
-            image: imageMap.train,
             summary: "Scenic train ride from Jim Thorpe through the Lehigh Gorge area. Good for kids, older family members, or anyone avoiding a hike.",
             details: "Pair this with walking around Jim Thorpe. Verify pet rules by excursion before booking.",
             time: "About 70 minutes for many standard rides",
@@ -503,9 +508,8 @@
           {
             type: "activity",
             name: "Quiet Valley Living Historical Farm",
-            image: imageMap.forest,
             summary: "Living-history farm near Stroudsburg with seasonal tours, demonstrations, farm animals, and family events.",
-            details: "Good for younger kids or a calmer educational stop. Not the best fit if your group wants adventure.",
+            details: "Good for younger kids or a calmer educational stop, especially if you want something slower and educational.",
             time: "1-2 hours",
             price: "Summer tours: about $15 adult / $8 child 3-12",
             pet: false,
@@ -514,9 +518,20 @@
             source: "https://quietvalley.org/summer-season-farm-tour-program-offering/"
           },
           {
+            type: "activity",
+            name: "Hickory Run State Park / Boulder Field",
+            summary: "State park with trails, streams, picnic areas, and the unusual National Natural Landmark Boulder Field.",
+            details: "A strong add-on if you want something more unique than a normal walk. Outdoorsy, not polished theme-park entertainment.",
+            time: "2-4 hours",
+            price: "Free",
+            pet: true,
+            petLabel: "Dog friendly on leash in allowed areas",
+            tags: ["State park", "Unique", "Free"],
+            source: "https://www.dcnr.pa.gov/StateParks/FindAPark/HickoryRunStatePark/Pages/default.aspx"
+          },
+          {
             type: "dining",
             name: "Barley Creek Brewing Company",
-            image: imageMap.brewery,
             summary: "Local brewery and restaurant in Tannersville with casual food, drinks, outdoor space, and a more memorable stop than a chain restaurant.",
             details: "Good for a group meal after hiking or parks. Pocono tourism lists it among pet-friendly restaurants with outdoor seating.",
             time: "1-2 hours",
@@ -529,7 +544,6 @@
           {
             type: "dining",
             name: "Roadies Restaurant and Bar",
-            image: imageMap.dining,
             summary: "Casual restaurant option near Penn’s Peak often mentioned as a pet-friendly outdoor dining stop in the Poconos.",
             details: "Best as a practical dog-friendly meal option after outdoor activities rather than a destination by itself.",
             time: "1-1.5 hours",
@@ -542,7 +556,6 @@
           {
             type: "dining",
             name: "The Frogtown Chophouse",
-            image: imageMap.dining,
             summary: "Nicer Pocono steakhouse option for a non-dog dinner when the group wants an actual sit-down meal.",
             details: "Use this when part of the group wants a better dinner instead of another casual brewery or pizza stop.",
             time: "1.5-2 hours",
@@ -551,19 +564,6 @@
             petLabel: "No dog assumption",
             tags: ["Dining", "Upscale"],
             source: "https://frogtownchophouse.com/"
-          },
-          {
-            type: "activity",
-            name: "Hickory Run State Park / Boulder Field",
-            image: imageMap.forest,
-            summary: "State park with trails, streams, picnic areas, and the unusual National Natural Landmark Boulder Field.",
-            details: "A strong add-on if you want something more unique than a normal walk. Keep expectations realistic: it is outdoorsy, not polished-theme-park entertainment.",
-            time: "2-4 hours",
-            price: "Free",
-            pet: true,
-            petLabel: "Dog friendly on leash in allowed areas",
-            tags: ["State park", "Unique", "Free"],
-            source: "https://www.dcnr.pa.gov/StateParks/FindAPark/HickoryRunStatePark/Pages/default.aspx"
           }
         ]
       },
@@ -578,7 +578,6 @@
           {
             type: "activity",
             name: "Blue Ridge Parkway",
-            image: imageMap.scenic,
             summary: "Iconic scenic mountain drive with overlooks, picnic areas, visitor stops, and trail access near Asheville.",
             details: "Best free anchor activity. You can do a short overlook drive or build a full day around stops and hikes.",
             time: "1 hour to full day",
@@ -591,7 +590,6 @@
           {
             type: "activity",
             name: "North Carolina Arboretum",
-            image: imageMap.garden,
             summary: "Public garden and trail area south of Asheville with cultivated gardens, wooded trails, exhibits, and educational programming.",
             details: "Good slower day. Leashed dogs are welcome outdoors; buildings and some exhibits are restricted.",
             time: "2-4 hours",
@@ -604,7 +602,6 @@
           {
             type: "activity",
             name: "DuPont State Recreational Forest",
-            image: imageMap.waterfall,
             summary: "Large waterfall and trail area with popular stops like Hooker Falls, Triple Falls, and High Falls.",
             details: "Best active family day near Asheville. Great payoff, but not ideal for anyone who cannot handle trail walking.",
             time: "2-5 hours",
@@ -617,7 +614,6 @@
           {
             type: "activity",
             name: "Chimney Rock at Chimney Rock State Park",
-            image: imageMap.scenic,
             summary: "Paid mountain-view attraction with trails, overlooks, stairs, and family-friendly nature features.",
             details: "More structured than a random hike, but not free. Good if the family wants views without figuring everything out from scratch.",
             time: "2-4 hours",
@@ -630,7 +626,6 @@
           {
             type: "activity",
             name: "Biltmore Estate",
-            image: imageMap.garden,
             summary: "Asheville’s major paid attraction with estate grounds, gardens, house tour options, shops, dining, and winery experiences.",
             details: "Premium splurge. Dogs are allowed on estate grounds and some outdoor patios, but not inside buildings.",
             time: "Half day to full day",
@@ -643,7 +638,6 @@
           {
             type: "activity",
             name: "Downtown Asheville / River Arts District",
-            image: imageMap.town,
             summary: "Walkable areas with galleries, shops, breweries, murals, restaurants, and street energy.",
             details: "Good filler block between bigger activities. Dogs work well for outdoor walking and patios, but individual shops vary.",
             time: "2-5 hours",
@@ -654,9 +648,20 @@
             source: "https://www.exploreasheville.com/"
           },
           {
+            type: "activity",
+            name: "Asheville Pinball Museum",
+            summary: "Indoor arcade-style museum with playable pinball and classic games.",
+            details: "Strong rainy-day or evening option, especially if the weather ruins outdoor plans. Not a dog activity.",
+            time: "1-2 hours",
+            price: "Paid admission; check current pricing",
+            pet: false,
+            petLabel: "Not dog friendly",
+            tags: ["Indoor", "Rainy day", "Games"],
+            source: "https://ashevillepinball.com/"
+          },
+          {
             type: "dining",
             name: "White Duck Taco Shop",
-            image: imageMap.dining,
             summary: "Casual Asheville taco spot known for creative taco combinations and quick meals.",
             details: "Good family-friendly, not-too-fancy dining. Multiple Asheville-area locations; patio dog policy can vary by location and weather.",
             time: "45-75 minutes",
@@ -669,7 +674,6 @@
           {
             type: "dining",
             name: "Cúrate",
-            image: imageMap.dining,
             summary: "Highly regarded Spanish tapas restaurant in downtown Asheville and a true food destination.",
             details: "Use this for an adult-leaning dinner or special meal. Reservation recommended. Not a dog stop.",
             time: "1.5-2 hours",
@@ -682,7 +686,6 @@
           {
             type: "dining",
             name: "Sierra Nevada Brewery - Mills River",
-            image: imageMap.brewery,
             summary: "Huge brewery campus near Asheville with food, beer, outdoor areas, tours, and a destination-like feel.",
             details: "This is more than a restaurant stop. Good for a mixed group because people can eat, walk, sit outside, and make it a longer visit.",
             time: "2-3 hours",
@@ -695,7 +698,6 @@
           {
             type: "dining",
             name: "Sunny Point Café",
-            image: imageMap.dining,
             summary: "Popular Asheville breakfast/brunch spot with Southern-leaning comfort food.",
             details: "Good if your group wants a memorable brunch instead of another chain breakfast. Expect waits during busy times.",
             time: "1-1.5 hours",
@@ -704,19 +706,6 @@
             petLabel: "No dog assumption",
             tags: ["Dining", "Breakfast", "Popular"],
             source: "https://sunnypointcafe.com/"
-          },
-          {
-            type: "activity",
-            name: "Asheville Pinball Museum",
-            image: imageMap.museum,
-            summary: "Indoor arcade-style museum with playable pinball and classic games.",
-            details: "Strong rainy-day or evening option, especially if the weather ruins outdoor plans. Not a dog activity.",
-            time: "1-2 hours",
-            price: "Paid admission; check current pricing",
-            pet: false,
-            petLabel: "Not dog friendly",
-            tags: ["Indoor", "Rainy day", "Games"],
-            source: "https://ashevillepinball.com/"
           }
         ]
       },
@@ -731,7 +720,8 @@
           {
             type: "activity",
             name: "Badlands National Park",
-            image: imageMap.scenic,
+            image: "https://www.nps.gov/badl/planyourvisit/images/entrancesign001.JPG?autorotate=false&format=webp&maxheight=1300&maxwidth=1300",
+            imageNote: "Image from National Park Service Badlands source.",
             summary: "Dramatic eroded buttes, pinnacles, mixed-grass prairie, scenic roads, overlooks, fossils, and wildlife.",
             details: "Best with a dog as a scenic-drive and overlook stop. Pets are restricted from trails.",
             time: "Half day to full day",
@@ -744,7 +734,8 @@
           {
             type: "activity",
             name: "Badlands Loop State Scenic Byway",
-            image: imageMap.scenic,
+            image: "https://www.nps.gov/badl/planyourvisit/images/entrancesign001.JPG?autorotate=false&format=webp&maxheight=1300&maxwidth=1300",
+            imageNote: "Image from National Park Service Badlands source.",
             summary: "A 39-mile paved route through Badlands National Park with pullouts, overlooks, wildlife viewing, and photo stops.",
             details: "Great dog-compatible sightseeing because the main value is from the vehicle and overlooks.",
             time: "1.5-3 hours with stops",
@@ -757,7 +748,6 @@
           {
             type: "activity",
             name: "Mount Rushmore National Memorial",
-            image: imageMap.landmark,
             summary: "Iconic landmark carved into the Black Hills. Best as a short stop, not an all-day activity.",
             details: "No entrance fee, but parking costs money. Dogs are limited to designated areas, so do not plan this as a dog-centered visit.",
             time: "1-2 hours",
@@ -770,7 +760,8 @@
           {
             type: "activity",
             name: "Custer State Park",
-            image: imageMap.wildlife,
+            image: "https://gfp.sd.gov/UserDocs/nav/MotorcycleBuffaloSDTourism_%282%29.jpg",
+            imageNote: "Image from South Dakota Game, Fish & Parks source.",
             summary: "Huge state park with wildlife, lakes, scenic roads, hiking, fishing, picnic areas, and some of the best family sightseeing in the region.",
             details: "This should be an anchor day. Pets must be leashed and are restricted from buildings and swim beaches.",
             time: "Half day to 2 days",
@@ -783,7 +774,8 @@
           {
             type: "activity",
             name: "Custer Wildlife Loop Road",
-            image: imageMap.wildlife,
+            image: "https://gfp.sd.gov/UserDocs/nav/MotorcycleBuffaloSDTourism_%282%29.jpg",
+            imageNote: "Image from South Dakota Game, Fish & Parks source.",
             summary: "An 18-mile wildlife drive known for bison, prairie dogs, deer, elk, pronghorn, and the famous begging burros.",
             details: "Go early or late for better wildlife odds. Keep distance from bison. This is one of the easiest dog-compatible highlights.",
             time: "1.5+ hours",
@@ -796,7 +788,6 @@
           {
             type: "activity",
             name: "Spearfish Canyon Scenic Byway",
-            image: imageMap.scenic,
             summary: "Scenic canyon drive with limestone cliffs, forest views, waterfall stops, and short walks.",
             details: "Easy high-payoff drive. Good for families because you can choose short stops instead of long hikes.",
             time: "1.5-3 hours",
@@ -809,7 +800,6 @@
           {
             type: "activity",
             name: "Needles Highway",
-            image: imageMap.scenic,
             summary: "Famous Black Hills scenic road with granite spires, narrow tunnels, switchbacks, and views.",
             details: "Better for sightseeing than nervous drivers. Works well as part of a Custer State Park day.",
             time: "1-2 hours plus stops",
@@ -822,7 +812,6 @@
           {
             type: "activity",
             name: "Crazy Horse Memorial",
-            image: imageMap.landmark,
             summary: "Large mountain carving and visitor complex focused on Native American history, art, and culture.",
             details: "Good add-on near Custer/Mount Rushmore. Mostly a non-dog attraction if going inside visitor areas.",
             time: "1.5-3 hours",
@@ -835,7 +824,6 @@
           {
             type: "activity",
             name: "Jewel Cave National Monument",
-            image: imageMap.cave,
             summary: "National monument with one of the longest cave systems in the world and guided cave tours.",
             details: "Great non-dog activity for a split-group day. Cave tours are not pet friendly.",
             time: "1.5-3 hours",
@@ -848,7 +836,6 @@
           {
             type: "activity",
             name: "Reptile Gardens",
-            image: imageMap.wildlife,
             summary: "Paid animal attraction near Rapid City with reptiles, gardens, exhibits, and seasonal shows.",
             details: "Kid-friendly break from long drives. Not dog friendly, so only include it when the dog can stay elsewhere safely.",
             time: "1.5-3 hours",
@@ -861,7 +848,6 @@
           {
             type: "dining",
             name: "Alpine Inn - Hill City",
-            image: imageMap.dining,
             summary: "Famous Hill City restaurant known for a very simple dinner menu and old-school Black Hills reputation.",
             details: "One-of-a-kind dinner stop. Not dog friendly for normal indoor dining, and waits can happen.",
             time: "1-2 hours",
@@ -874,7 +860,6 @@
           {
             type: "dining",
             name: "Skogen Kitchen",
-            image: imageMap.dining,
             summary: "Small high-end restaurant in Custer with a modern menu that stands out from normal tourist-town food.",
             details: "Best for a special dinner. Reservation recommended. Not a dog activity.",
             time: "1.5-2 hours",
@@ -887,7 +872,6 @@
           {
             type: "dining",
             name: "Mount Rushmore Brewing Company",
-            image: imageMap.brewery,
             summary: "Casual brewery and restaurant in Custer with pub food and house-brewed beer.",
             details: "Good practical meal after Custer State Park or Mount Rushmore. Dog-friendly seating is commonly listed for outdoor areas.",
             time: "1-2 hours",
@@ -926,12 +910,6 @@
     document.querySelectorAll(".destination-card").forEach(card => {
       card.addEventListener("click", () => {
         showLocation(card.dataset.location);
-      });
-    });
-
-    document.querySelectorAll("img").forEach(img => {
-      img.addEventListener("error", () => {
-        img.src = fallbackImage;
       });
     });
 
@@ -993,9 +971,12 @@
         article.className = "activity-card";
 
         const tags = activity.tags.map(tag => `<span class="tag">${tag}</span>`).join("");
+        const imageHTML = activity.image ? `
+          
+        ` : "";
 
         article.innerHTML = `
-          <img class="activity-image" src="${activity.image}" alt="${activity.name}">
+          ${imageHTML}
           <div class="activity-content">
             <h3>${activity.name}</h3>
             <p>${activity.summary}</p>
@@ -1016,9 +997,11 @@
         `;
 
         const img = article.querySelector("img");
-        img.addEventListener("error", () => {
-          img.src = fallbackImage;
-        });
+        if (img) {
+          img.addEventListener("error", () => {
+            img.src = fallbackImage;
+          });
+        }
 
         activityGrid.appendChild(article);
       });
