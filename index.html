@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dog-Friendly Family Vacation Guide</title>
+
+  <style>
+    :root {
+      --bg: #f6f1e8;
+      --card: #fffaf0;
+      --ink: #24301f;
+      --muted: #5d6858;
+      --accent: #3f7d58;
+      --accent-dark: #28523a;
+      --line: #ddd0b8;
+      --tag: #e7f0df;
+      --cost: #fff0d8;
+      --dog: #dff3df;
+      --limited: #ffe2d8;
+      --shadow: 0 16px 40px rgba(36, 48, 31, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(63, 125, 88, 0.16), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(139, 99, 48, 0.14), transparent 32rem),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 3rem 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.72);
+      color: var(--accent-dark);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 { line-height: 1.12; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+    }
+
+    .intro {
+      max-width: 820px;
+      margin: 1rem auto 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 2rem));
+      margin: 0 auto 4rem;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .destination-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .destination-card,
+    .activity-card,
+    .detail-header {
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 240, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .destination-card {
+      overflow: hidden;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .destination-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(63, 125, 88, 0.45);
+      box-shadow: 0 20px 48px rgba(36, 48, 31, 0.16);
+    }
+
+    .destination-image,
+    .activity-image {
+      width: 100%;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(135deg, #d7d0b9, #80956f);
+    }
+
+    .destination-image { height: 170px; }
+    .activity-image { height: 185px; border-radius: 18px 18px 0 0; }
+
+    .destination-content {
+      padding: 1.15rem;
+    }
+
+    .destination-card h2 {
+      margin: 0 0 0.6rem;
+      font-size: 1.55rem;
+    }
+
+    .destination-card p {
+      margin: 0 0 1rem;
+      color: var(--muted);
+    }
+
+    .destination-card button,
+    .back-btn,
+    .filter-btn {
+      border: 0;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      padding: 0.65rem 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .destination-card button:hover,
+    .back-btn:hover,
+    .filter-btn:hover { background: var(--accent-dark); }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 1.25rem 0;
+    }
+
+    .detail-header {
+      padding: 1.25rem;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(63, 125, 88, 0.14), rgba(255, 250, 240, 0.72));
+    }
+
+    .detail-header h2 {
+      margin: 0 0 0.4rem;
+      font-size: clamp(1.7rem, 4vw, 3rem);
+    }
+
+    .detail-header p {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .summary-box {
+      padding: 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 250, 240, 0.65);
+    }
+
+    .summary-box strong {
+      display: block;
+      color: var(--accent-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .filters {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    .filter-btn {
+      background: rgba(63, 125, 88, 0.14);
+      color: var(--accent-dark);
+      border: 1px solid rgba(63, 125, 88, 0.24);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .activity-card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 22px;
+    }
+
+    .activity-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1rem;
+      height: 100%;
+    }
+
+    .activity-card h3 {
+      margin: 0;
+      font-size: 1.16rem;
+    }
+
+    .activity-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .quick-facts {
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(246, 241, 232, 0.65);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .quick-facts strong { color: var(--ink); }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: auto;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      background: var(--tag);
+      color: var(--accent-dark);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .cost { background: var(--cost); color: #6c4315; }
+    .dog { background: var(--dog); color: #27512c; }
+    .limited { background: var(--limited); color: #70321e; }
+
+    .source {
+      color: var(--accent-dark);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .source:hover { text-decoration: underline; }
+
+    .empty-message {
+      display: none;
+      padding: 1rem;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      background: rgba(255, 250, 240, 0.7);
+    }
+
+    footer {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto 3rem;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      header { padding-top: 2rem; }
+      .top-bar { align-items: stretch; }
+      .back-btn { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <span class="eyebrow">Family Vacation Guide</span>
+    <h1>Pick a destination</h1>
+    <p class="intro">
+      Choose a trip option below. Each destination page includes real activities, pricing,
+      planning notes, dog rules, and source links.
+    </p>
+  </header>
+
+  <main>
+    <section id="landing" class="view active">
+      <div class="destination-grid">
+        <article class="destination-card" data-location="poconos">
+          <img class="destination-image" src="https://www.visitbushkillfalls.com/media/487074/bushkil-falls_scenic-fall_60106085_1000x667.jpg" alt="Bushkill Falls walkway and waterfall">
+          <div class="destination-content">
+            <h2>Pocono Mountains, PA</h2>
+            <p>Best for waterfalls, relaxed nature stops, scenic drives, and easy family activities.</p>
+            <div class="meta">
+              <span class="tag dog">Some dog-friendly options</span>
+              <span class="tag">Low to mid cost</span>
+            </div>
+            <br>
+            <button type="button" data-location-btn="poconos">View activities</button>
+          </div>
+        </article>
+
+        <article class="destination-card" data-location="asheville">
+          <img class="destination-image" src="https://www.exploreasheville.com/_next/image?q=75&url=https%3A%2F%2Fapi.exploreasheville.com%2Fsites%2Fdefault%2Ffiles%2F2024-08%2F171204_cvb_parkway_053_medium_fdfe22ba-4273-448f-b301-8df5d53b82b7.jpg&w=1920" alt="Blue Ridge Parkway overlook near Asheville">
+          <div class="destination-content">
+            <h2>Asheville, NC</h2>
+            <p>Best for mountain views, gardens, waterfalls, scenic drives, and food stops.</p>
+            <div class="meta">
+              <span class="tag dog">Strong dog-friendly options</span>
+              <span class="tag">Mixed cost</span>
+            </div>
+            <br>
+            <button type="button" data-location-btn="asheville">View activities</button>
+          </div>
+        </article>
+
+        <article class="destination-card" data-location="blackhills">
+          <img class="destination-image" src="https://www.nps.gov/badl/planyourvisit/images/entrancesign001.JPG?autorotate=false&format=webp&maxheight=1300&maxwidth=1300" alt="Badlands National Park entrance sign">
+          <div class="destination-content">
+            <h2>Black Hills & Badlands, SD</h2>
+            <p>Best for road-trip sightseeing, national parks, wildlife drives, and landmarks.</p>
+            <div class="meta">
+              <span class="tag dog">Good dog-friendly flexibility</span>
+              <span class="tag">Low to mid cost</span>
+            </div>
+            <br>
+            <button type="button" data-location-btn="blackhills">View activities</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="detail" class="view">
+      <div class="top-bar">
+        <button class="back-btn" type="button" id="backBtn">← Back to locations</button>
+
+        <div class="filters">
+          <button class="filter-btn active" type="button" data-filter="all">All activities</button>
+          <button class="filter-btn" type="button" data-filter="dog">Pet friendly only</button>
+        </div>
+      </div>
+
+      <div class="detail-header">
+        <h2 id="locationTitle"></h2>
+        <p id="locationSummary"></p>
+
+        <div class="summary-grid">
+          <div class="summary-box">
+            <strong>Best for</strong>
+            <span id="bestFor"></span>
+          </div>
+          <div class="summary-box">
+            <strong>Dog reality</strong>
+            <span id="dogReality"></span>
+          </div>
+          <div class="summary-box">
+            <strong>Budget note</strong>
+            <span id="budgetNote"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="activity-grid" id="activityGrid"></div>
+      <p class="empty-message" id="emptyMessage">No activities match this filter.</p>
+    </section>
+  </main>
+
+  <footer>
+    Costs and pet rules can change. Check each official source before booking or driving out.
+  </footer>
+
+  <script>
+    const fallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='500' viewBox='0 0 900 500'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%23d8d0b9'/%3E%3Cstop offset='1' stop-color='%236f8a5b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='900' height='500' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='%23fffaf0' font-family='Arial' font-size='38' font-weight='700'%3ETrip Activity%3C/text%3E%3C/svg%3E";
+
+    const locations = {
+      poconos: {
+        title: "Pocono Mountains, PA",
+        summary: "Good for waterfalls, river areas, scenic drives, and slower family activities. Dog-friendliness is mixed, so the pet filter matters here.",
+        bestFor: "Waterfalls, easy walks, river scenery, relaxed family stops.",
+        dogReality: "Outdoor parks are the better dog choices. Some paid attractions either restrict dogs or require checking rules before you go.",
+        budgetNote: "You can keep this trip cheap if you lean on state/national recreation areas instead of paid attractions.",
+        activities: [
+          {
+            name: "Bushkill Falls",
+            image: "https://www.visitbushkillfalls.com/media/487074/bushkil-falls_scenic-fall_60106085_1000x667.jpg",
+            summary: "A private waterfall park known as the “Niagara of Pennsylvania.” The main draw is the network of wooded trails, bridges, and views of eight waterfalls.",
+            details: "Best use: half-day visit. The Green Trail is the shortest option at about 15 minutes; the Red Trail is the full route and can take more than 2 hours.",
+            time: "1-3 hours depending on trail",
+            price: "$22 adult / $12 child 4-10",
+            pet: true,
+            petLabel: "Dog friendly, but expect stairs and trail limits",
+            tags: ["Waterfalls", "Walking", "Paid attraction"],
+            source: "https://www.visitbushkillfalls.com/things-to-do/trails/"
+          },
+          {
+            name: "Lehigh Gorge Scenic Railway",
+            image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1200&q=80",
+            summary: "A scenic train ride from Jim Thorpe through the Lehigh Gorge area. This is a good low-effort activity for family members who do not want a hike.",
+            details: "Best use: relaxed ride plus time in Jim Thorpe. Pet rules can vary by excursion, so treat this as a verify-before-booking activity.",
+            time: "About 70 minutes for standard scenic rides",
+            price: "From about $22 adult / $9 child",
+            pet: false,
+            petLabel: "Verify pet policy before booking",
+            tags: ["Scenic train", "Low effort", "Paid attraction"],
+            source: "https://www.poconomountains.com/event/lehigh-gorge-scenic-train-excursions/23138/"
+          },
+          {
+            name: "Lehigh Gorge State Park",
+            image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+            summary: "A free state park option with river views, biking, hiking, picnicking, and access to the Lehigh Gorge Trail.",
+            details: "Best use: budget outdoor day. This is a better dog-friendly alternative if you want open space without attraction pricing.",
+            time: "1 hour to full day",
+            price: "Free",
+            pet: true,
+            petLabel: "Dog friendly on leash",
+            tags: ["Hiking", "River views", "Free"],
+            source: "https://www.dcnr.pa.gov/StateParks/FindAPark/LehighGorgeStatePark/Pages/default.aspx"
+          },
+          {
+            name: "Delaware Water Gap National Recreation Area",
+            image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
+            summary: "Large National Park Service recreation area with trails, river access, picnic areas, scenic roads, and overlooks.",
+            details: "Best use: flexible dog-friendly outdoor day. Dogs are allowed in many areas but must follow NPS pet restrictions.",
+            time: "Half day to full day",
+            price: "Many areas free; some expanded amenity sites may charge",
+            pet: true,
+            petLabel: "Dog friendly on leash in allowed areas",
+            tags: ["Trails", "River", "Scenic views"],
+            source: "https://www.nps.gov/dewa/planyourvisit/pets.htm"
+          },
+          {
+            name: "Quiet Valley Living Historical Farm",
+            image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",
+            summary: "A living-history farm near Stroudsburg with demonstrations, farm animals, seasonal tours, and family events.",
+            details: "Best use: calm educational stop, especially for kids who like animals and old-time farm settings.",
+            time: "1-2 hours",
+            price: "Summer tours: $15 adult / $8 child 3-12",
+            pet: false,
+            petLabel: "Not a primary dog activity",
+            tags: ["History", "Farm", "Paid attraction"],
+            source: "https://quietvalley.org/summer-season-farm-tour-program-offering/"
+          }
+        ]
+      },
+
+      asheville: {
+        title: "Asheville, NC",
+        summary: "Strongest mix of mountain views, gardens, waterfalls, and dog-friendly outdoor options. Costs range from free scenic drives to expensive estate admission.",
+        bestFor: "Scenic drives, gardens, waterfalls, mountain views, food stops.",
+        dogReality: "Very good. Most outdoor choices work with a leashed dog, but buildings and some formal garden areas may be restricted.",
+        budgetNote: "Blue Ridge Parkway and DuPont keep costs low. Biltmore is the expensive outlier.",
+        activities: [
+          {
+            name: "Blue Ridge Parkway",
+            image: "https://www.exploreasheville.com/_next/image?q=75&url=https%3A%2F%2Fapi.exploreasheville.com%2Fsites%2Fdefault%2Ffiles%2F2024-08%2F171204_cvb_parkway_053_medium_fdfe22ba-4273-448f-b301-8df5d53b82b7.jpg&w=1920",
+            summary: "A scenic mountain drive with paved overlooks, picnic options, visitor stops, and trail access near Asheville.",
+            details: "Best use: anchor activity for the trip. You can make it a short overlook drive or a longer day with hikes and picnic stops.",
+            time: "1 hour to full day",
+            price: "Free",
+            pet: true,
+            petLabel: "Dog friendly on leash",
+            tags: ["Scenic drive", "Overlooks", "Free"],
+            source: "https://www.exploreasheville.com/things-to-do/blue-ridge-parkway"
+          },
+          {
+            name: "North Carolina Arboretum",
+            image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80",
+            summary: "Public gardens and trails south of Asheville with cultivated landscapes, wooded trails, exhibits, and educational programming.",
+            details: "Best use: slower outdoor day. Leashed dogs are welcome on property, but only service animals can enter buildings and the Bonsai Exhibition Garden.",
+            time: "2-4 hours",
+            price: "$25 parking per personal vehicle",
+            pet: true,
+            petLabel: "Dog friendly outdoors; buildings restricted",
+            tags: ["Gardens", "Trails", "Parking fee"],
+            source: "https://www.ncarboretum.org/plan-a-visit/"
+          },
+          {
+            name: "DuPont State Recreational Forest",
+            image: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80",
+            summary: "Large waterfall and trail area with popular stops like Hooker Falls, Triple Falls, and High Falls.",
+            details: "Best use: active family day. Great payoff if your group is comfortable walking; less ideal for anyone avoiding uneven trails.",
+            time: "2-5 hours",
+            price: "Free",
+            pet: true,
+            petLabel: "Dog friendly on leash",
+            tags: ["Waterfalls", "Hiking", "Free"],
+            source: "https://www.dupontstaterecreationalforest.com/Pages/Rules.aspx"
+          },
+          {
+            name: "Chimney Rock at Chimney Rock State Park",
+            image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
+            summary: "Paid mountain-view attraction with trails, overlooks, stairs, and family-friendly nature features.",
+            details: "Best use: structured scenery day. More predictable than a random hike, but more expensive than free public trails.",
+            time: "2-4 hours",
+            price: "$17 adult / $8 youth 5-15",
+            pet: true,
+            petLabel: "Dog friendly on leash; restrictions may apply",
+            tags: ["Views", "Hiking", "Paid attraction"],
+            source: "https://www.chimneyrockpark.com/info-and-tickets/"
+          },
+          {
+            name: "Biltmore Estate",
+            image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80",
+            summary: "The major paid attraction in Asheville with the estate, gardens, grounds, shops, dining, and house tour options.",
+            details: "Best use: premium splurge day. Dogs are allowed on outdoor grounds, but not inside the house, restaurants, shops, or buildings.",
+            time: "Half day to full day",
+            price: "House & Grounds from about $140",
+            pet: true,
+            petLabel: "Dog friendly outdoors only",
+            tags: ["Estate", "Gardens", "Expensive"],
+            source: "https://www.biltmore.com/visit/tickets-pricing/"
+          }
+        ]
+      },
+
+      blackhills: {
+        title: "Black Hills & Badlands, SD",
+        summary: "Best road-trip destination of the three. Strong for scenic drives, wildlife, landmarks, caves, and national/state parks. Dog access varies by park.",
+        bestFor: "Road-trip sightseeing, wildlife drives, overlooks, iconic landmarks.",
+        dogReality: "Good, but uneven. Custer State Park is strong for dogs; Badlands and Mount Rushmore are more limited.",
+        budgetNote: "Most big-ticket scenery is vehicle-pass based, so a family of six can get good value if you plan around park passes.",
+        activities: [
+          {
+            name: "Badlands National Park",
+            image: "https://www.nps.gov/badl/planyourvisit/images/entrancesign001.JPG?autorotate=false&format=webp&maxheight=1300&maxwidth=1300",
+            summary: "A national park with dramatic eroded buttes, pinnacles, mixed-grass prairie, scenic roads, overlooks, fossils, and wildlife.",
+            details: "Best use with a dog: scenic drive and overlooks, not hiking. Pets are allowed in developed areas and roads/parking areas, but not hiking trails.",
+            time: "Half day to full day",
+            price: "$30 private vehicle / 7 days",
+            pet: true,
+            petLabel: "Limited dog access; no trails",
+            tags: ["National park", "Scenic drive", "Vehicle fee"],
+            source: "https://www.nps.gov/badl/planyourvisit/basicinfo.htm"
+          },
+          {
+            name: "Badlands Loop State Scenic Byway",
+            image: "https://www.nps.gov/badl/planyourvisit/images/entrancesign001.JPG?autorotate=false&format=webp&maxheight=1300&maxwidth=1300",
+            summary: "A 39-mile paved scenic route through Badlands National Park with roadside overlooks, wildlife viewing, and dramatic formations.",
+            details: "Best use: dog-compatible sightseeing from the car and overlooks. Travel South Dakota recommends allowing more than the one-hour drive time so you can stop.",
+            time: "1.5-3 hours with stops",
+            price: "Covered by Badlands park entrance",
+            pet: true,
+            petLabel: "Good dog-compatible drive; trail restrictions still apply",
+            tags: ["Scenic drive", "Overlooks", "Photography"],
+            source: "https://www.travelsouthdakota.com/trip-ideas/driving-badlands-loop-state-scenic-byway"
+          },
+          {
+            name: "Mount Rushmore National Memorial",
+            image: "https://images.unsplash.com/photo-1596223575327-99a5be4faf1d?auto=format&fit=crop&w=1200&q=80",
+            summary: "Iconic half-day landmark. No entrance fee, but parking is paid through the concession-operated parking facility.",
+            details: "Best use with a dog: quick stop, photo, and limited designated pet areas. This is not a full dog activity.",
+            time: "1-2 hours",
+            price: "$10 parking per vehicle",
+            pet: true,
+            petLabel: "Limited dog access",
+            tags: ["Landmark", "Short stop", "Parking fee"],
+            source: "https://www.nps.gov/moru/planyourvisit/parking.htm"
+          },
+          {
+            name: "Custer State Park",
+            image: "https://gfp.sd.gov/UserDocs/nav/MotorcycleBuffaloSDTourism_%282%29.jpg",
+            summary: "A 71,000-acre state park with wildlife, lakes, scenic drives, hiking, biking, swimming areas, fishing, and picnic stops.",
+            details: "Best use: one of the strongest family days in the region. Pets must be leashed no longer than 10 feet and are not allowed in buildings or designated swim beaches.",
+            time: "Half day to 2 days",
+            price: "$25 vehicle pass, valid 1-7 days",
+            pet: true,
+            petLabel: "Dog friendly on leash; buildings/swim beaches restricted",
+            tags: ["Wildlife", "Trails", "Vehicle fee"],
+            source: "https://gfp.sd.gov/parks/detail/custer-state-park/"
+          },
+          {
+            name: "Custer Wildlife Loop Road",
+            image: "https://gfp.sd.gov/UserDocs/nav/MotorcycleBuffaloSDTourism_%282%29.jpg",
+            summary: "An 18-mile route through prairie and pine-studded hills known for buffalo, deer, elk, prairie dogs, burros, and other wildlife.",
+            details: "Best use: early morning or late evening drive. Stay in the vehicle or keep major distance from wildlife, especially bison.",
+            time: "1.5+ hours, longer with wildlife jams",
+            price: "Covered by Custer State Park pass",
+            pet: true,
+            petLabel: "Dog friendly from vehicle / allowed outdoor areas",
+            tags: ["Wildlife drive", "Scenic drive", "Family favorite"],
+            source: "https://gfp.sd.gov/csp-scenic-drives/"
+          },
+          {
+            name: "Spearfish Canyon Scenic Byway",
+            image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
+            summary: "A scenic canyon drive with waterfall stops, limestone cliffs, forested views, and short walks.",
+            details: "Best use: easy high-payoff drive between bigger park days. Good for mixed ages because you can choose how much walking to do.",
+            time: "1.5-3 hours",
+            price: "Free",
+            pet: true,
+            petLabel: "Dog friendly in outdoor areas",
+            tags: ["Scenic drive", "Waterfalls", "Free"],
+            source: "https://www.blackhillsbadlands.com/scenic-drives/spearfish-canyon-scenic-byway"
+          },
+          {
+            name: "Reptile Gardens",
+            image: "https://images.unsplash.com/photo-1524704796725-9fc3044a58b2?auto=format&fit=crop&w=1200&q=80",
+            summary: "Paid animal attraction near Rapid City with reptiles, botanical gardens, exhibits, and seasonal shows.",
+            details: "Best use: kid-friendly break from driving. Not a dog-friendly activity, so only include it if someone can stay with the dog elsewhere.",
+            time: "1.5-3 hours",
+            price: "Summer: $26 adult / $20 child 4-10",
+            pet: false,
+            petLabel: "Not pet friendly",
+            tags: ["Animal attraction", "Kid friendly", "Paid attraction"],
+            source: "https://www.reptilegardens.com/visit"
+          }
+        ]
+      }
+    };
+
+    const landing = document.getElementById("landing");
+    const detail = document.getElementById("detail");
+    const locationTitle = document.getElementById("locationTitle");
+    const locationSummary = document.getElementById("locationSummary");
+    const bestFor = document.getElementById("bestFor");
+    const dogReality = document.getElementById("dogReality");
+    const budgetNote = document.getElementById("budgetNote");
+    const activityGrid = document.getElementById("activityGrid");
+    const emptyMessage = document.getElementById("emptyMessage");
+    const backBtn = document.getElementById("backBtn");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    let currentLocation = null;
+    let currentFilter = "all";
+
+    document.querySelectorAll("[data-location-btn]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+        showLocation(button.dataset.locationBtn);
+      });
+    });
+
+    document.querySelectorAll(".destination-card").forEach(card => {
+      card.addEventListener("click", () => {
+        showLocation(card.dataset.location);
+      });
+    });
+
+    document.querySelectorAll("img").forEach(img => {
+      img.addEventListener("error", () => {
+        img.src = fallbackImage;
+      });
+    });
+
+    backBtn.addEventListener("click", () => {
+      detail.classList.remove("active");
+      landing.classList.add("active");
+      currentLocation = null;
+      currentFilter = "all";
+      setActiveFilter("all");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+        setActiveFilter(currentFilter);
+        renderActivities();
+      });
+    });
+
+    function showLocation(locationKey) {
+      currentLocation = locations[locationKey];
+      currentFilter = "all";
+      setActiveFilter("all");
+
+      locationTitle.textContent = currentLocation.title;
+      locationSummary.textContent = currentLocation.summary;
+      bestFor.textContent = currentLocation.bestFor;
+      dogReality.textContent = currentLocation.dogReality;
+      budgetNote.textContent = currentLocation.budgetNote;
+
+      landing.classList.remove("active");
+      detail.classList.add("active");
+
+      renderActivities();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function setActiveFilter(filter) {
+      filterButtons.forEach(button => {
+        button.classList.toggle("active", button.dataset.filter === filter);
+      });
+    }
+
+    function renderActivities() {
+      if (!currentLocation) return;
+
+      const filteredActivities = currentLocation.activities.filter(activity => {
+        if (currentFilter === "dog") return activity.pet === true;
+        return true;
+      });
+
+      activityGrid.innerHTML = "";
+
+      filteredActivities.forEach(activity => {
+        const article = document.createElement("article");
+        article.className = "activity-card";
+
+        const tags = activity.tags.map(tag => `<span class="tag">${tag}</span>`).join("");
+
+        article.innerHTML = `
+          <img class="activity-image" src="${activity.image}" alt="${activity.name}">
+          <div class="activity-content">
+            <h3>${activity.name}</h3>
+            <p>${activity.summary}</p>
+
+            <div class="quick-facts">
+              <span><strong>Best use:</strong> ${activity.details}</span>
+              <span><strong>Estimated time:</strong> ${activity.time}</span>
+            </div>
+
+            <div class="meta">
+              <span class="tag cost">${activity.price}</span>
+              <span class="tag ${activity.pet ? "dog" : "limited"}">${activity.petLabel}</span>
+              ${tags}
+            </div>
+
+            <a class="source" href="${activity.source}" target="_blank" rel="noopener noreferrer">Check official source</a>
+          </div>
+        `;
+
+        const img = article.querySelector("img");
+        img.addEventListener("error", () => {
+          img.src = fallbackImage;
+        });
+
+        activityGrid.appendChild(article);
+      });
+
+      emptyMessage.style.display = filteredActivities.length ? "none" : "block";
+    }
+  </script>
+</body>
+</html>
