@@ -404,7 +404,7 @@
       </div>
 
       <div class="detail-header">
-        <h2 id="locationTitle"></h2><p id="mainLink" style="margin-top:6px;font-weight:bold;"></p>
+        <h2 id="locationTitle"></h2>
         <p id="locationSummary"></p>
 
         <div class="summary-grid">
@@ -423,7 +423,12 @@
         </div>
       </div>
 
-      <div class="activity-grid" id="activityGrid"></div>
+      
+    <h3 style="margin-top:20px;">🏡 Rentals</h3>
+    <div id="rentalGrid" class="activity-grid"></div>
+    <h3 style="margin-top:20px;">📍 Activities</h3>
+    <div class="activity-grid" id="activityGrid"></div>
+    
       <p class="empty-message" id="emptyMessage">No activities match this filter.</p>
     </section>
   </main>
@@ -437,7 +442,6 @@
 
     const locations = {
       poconos: {
-        mainUrl: "https://www.poconomountains.com/things-to-do/",
         title: "Pocono Mountains, PA",
         summary: "A solid lower-key family trip with waterfalls, state parks, scenic towns, casual food, and outdoor dog options. It is not as packed as Asheville or the Black Hills, so plan around nature and a few standout stops.",
         bestFor: "Waterfalls, forest parks, Jim Thorpe, relaxed pacing, casual family meals.",
@@ -570,7 +574,6 @@
       },
 
       asheville: {
-        mainUrl: "https://www.exploreasheville.com/things-to-do",
         title: "Asheville, NC",
         summary: "The strongest overall option if you want scenery plus food. It has free scenic drives, waterfalls, gardens, breweries, walkable areas, and plenty of dog-compatible patios.",
         bestFor: "Food, breweries, Blue Ridge views, waterfalls, gardens, downtown exploring.",
@@ -713,7 +716,6 @@
       },
 
       blackhills: {
-        mainUrl: "https://www.blackhillsbadlands.com/things-to-do/",
         title: "Black Hills & Badlands, SD",
         summary: "The best true road-trip option. It has national parks, wildlife drives, caves, scenic byways, western towns, and enough variety to fill several days.",
         bestFor: "Landmarks, wildlife, scenic drives, caves, state/national parks, road-trip pacing.",
@@ -891,7 +893,6 @@
     const landing = document.getElementById("landing");
     const detail = document.getElementById("detail");
     const locationTitle = document.getElementById("locationTitle");
-const mainLink = document.getElementById("mainLink");
     const locationSummary = document.getElementById("locationSummary");
     const bestFor = document.getElementById("bestFor");
     const dogReality = document.getElementById("dogReality");
@@ -930,12 +931,12 @@ const mainLink = document.getElementById("mainLink");
       button.addEventListener("click", () => {
         currentFilter = button.dataset.filter;
         setActiveFilter(currentFilter);
-        renderActivities();
+        renderRentals(); renderActivities();
       });
     });
 
     function showLocation(locationKey) {
-      currentLocation = locations[locationKey];
+      currentLocation = locations[locationKey]; currentLocationKey = locationKey;
       currentFilter = "all";
       setActiveFilter("all");
 
@@ -944,12 +945,11 @@ const mainLink = document.getElementById("mainLink");
       bestFor.textContent = currentLocation.bestFor;
       dogReality.textContent = currentLocation.dogReality;
       budgetNote.textContent = currentLocation.budgetNote;
-mainLink.innerHTML = `<a href="${currentLocation.mainUrl}" target="_blank">THINGS TO DO →</a>`;
 
       landing.classList.remove("active");
       detail.classList.add("active");
 
-      renderActivities();
+      renderRentals(); renderActivities();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -959,7 +959,51 @@ mainLink.innerHTML = `<a href="${currentLocation.mainUrl}" target="_blank">THING
       });
     }
 
-    function renderActivities() {
+    
+let currentLocationKey = null;
+
+const rentals = {
+  poconos: [
+    {name:"Lakefront 5BR w/ Game Room", price:"$300–$400", pet:"Yes", link:"https://www.airbnb.com/rooms/1309111468206243300"},
+    {name:"Riverfront Log Cabin", price:"$250–$400", pet:"Yes", link:"https://www.airbnb.com/rooms/843932615451503262"},
+    {name:"Modern 4BR w/ Sauna", price:"$250–$350", pet:"Yes", link:"https://www.airbnb.com/rooms/1257833611225944266"}
+  ],
+  asheville: [
+    {name:"4BR Dog-Friendly Yard House", price:"$250–$350", pet:"Yes", link:"https://www.airbnb.com/rooms/847902851313132699"},
+    {name:"Modern 4BR Mountain Villa", price:"$300–$400", pet:"Yes", link:"https://www.airbnb.com/rooms/572435903541837350"},
+    {name:"Forest 4BR Retreat", price:"$250–$400", pet:"Yes", link:"https://www.airbnb.com/rooms/642204"}
+  ],
+  blackhills: [
+    {name:"Eagle’s Nest 5BR Cabin", price:"$300–$400", pet:"Approval", link:"https://www.airbnb.com/rooms/629728663451105211"},
+    {name:"Hill City 4BR Cabin", price:"$250–$350", pet:"Yes", link:"#"},
+    {name:"Secluded Cabin w/ Acreage", price:"$250–$350", pet:"Yes", link:"https://www.airbnb.com/rooms/40369238"}
+  ]
+};
+
+const rentalGrid = document.getElementById("rentalGrid");
+
+function renderRentals() {
+  if (!currentLocationKey) return;
+  rentalGrid.innerHTML = "";
+
+  rentals[currentLocationKey].forEach(r => {
+    const card = document.createElement("div");
+    card.className = "activity-card";
+    card.innerHTML = `
+      <div class="activity-content">
+        <h3>${r.name}</h3>
+        <div class="meta">
+          <span class="tag cost">${r.price}</span>
+          <span class="tag dog">Pets: ${r.pet}</span>
+        </div>
+        <a class="source" href="${r.link}" target="_blank">View Rental</a>
+      </div>
+    `;
+    rentalGrid.appendChild(card);
+  });
+}
+
+function renderActivities() {
       if (!currentLocation) return;
 
       const filteredActivities = currentLocation.activities.filter(activity => {
